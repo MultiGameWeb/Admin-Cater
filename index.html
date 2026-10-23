@@ -96,13 +96,7 @@ input,select{font:inherit;padding:10px 12px;border:1px solid var(--line);border-
 </style>
 </head>
 <body>
-<div id="login"><h1>Catering Crew Admin</h1><button class="go" id="signin">Sign in with Google</button><p id="msg"></p>
-  <details id="setup"><summary>Settings</summary>
-    <p><input id="cfgEmail" placeholder="Admin Gmail (required)" style="width:100%"></p>
-    <p><input id="cfgKey" placeholder="Firebase Web API key" style="width:100%"></p>
-    <p><input id="cfgApp" placeholder="Web appId (optional)" style="width:100%"></p>
-    <button class="btn-o" id="cfgSave">Save</button>
-  </details></div>
+<div id="login"><h1>Catering Crew Admin</h1><button class="go" id="signin">Sign in with Google</button><p id="msg"></p></div>
 
 <div id="app" hidden>
   <aside id="side">
@@ -131,11 +125,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/fireba
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, getDocs, query, where, increment, arrayRemove } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-// Settings are asked once on this page and kept in this browser (no need to edit this file).
-const DEFAULTS = { apiKey: "AIzaSyAJkxCmTJRm__Ba_BJDQyBKF3wavZwhQIc", authDomain: "cateringapp-10b93.firebaseapp.com", projectId: "cateringapp-10b93", appId: "", email: "" };
-const cfg = { ...DEFAULTS, ...JSON.parse(localStorage.getItem('cc_admin_cfg') || '{}') };
-const firebaseConfig = { apiKey: cfg.apiKey, authDomain: cfg.authDomain, projectId: cfg.projectId, ...(cfg.appId ? { appId: cfg.appId } : {}) };
-const ADMIN_EMAIL = (cfg.email || '').trim().toLowerCase();
+// Admin Gmail is fixed here. The real protection is in the Firestore rules (only this Gmail can read admin data).
+const firebaseConfig = { apiKey: "AIzaSyAJkxCmTJRm__Ba_BJDQyBKF3wavZwhQIc", authDomain: "cateringapp-10b93.firebaseapp.com", projectId: "cateringapp-10b93" };
+const ADMIN_EMAIL = "kammarivinaykumar981@gmail.com";
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -167,13 +159,7 @@ const money = n => '₹' + Math.round(n).toLocaleString('en-IN');
 const app = initializeApp(firebaseConfig), auth = getAuth(app), db = getFirestore(app);
 let users = [], reports = [], events = [], stats = {}, tab = 'dashboard', term = '', sort = 'latest', period = 'all', unsubs = [];
 
-$('#cfgEmail').value = cfg.email || ''; $('#cfgKey').value = cfg.apiKey || ''; $('#cfgApp').value = cfg.appId || '';
-$('#setup').open = !ADMIN_EMAIL;
-$('#cfgSave').onclick = () => {
-  localStorage.setItem('cc_admin_cfg', JSON.stringify({ email: $('#cfgEmail').value.trim(), apiKey: $('#cfgKey').value.trim(), appId: $('#cfgApp').value.trim() }));
-  location.reload();
-};
-$('#signin').onclick = () => !ADMIN_EMAIL ? $('#msg').textContent = 'Enter your admin Gmail in Settings below and press Save first.' : signInWithPopup(auth, new GoogleAuthProvider()).catch(e => $('#msg').textContent = e.message);
+$('#signin').onclick = () => signInWithPopup(auth, new GoogleAuthProvider()).catch(e => $('#msg').textContent = e.message);
 $('#out').onclick = () => signOut(auth);
 $('#q').oninput = e => { term = e.target.value.toLowerCase(); render(); };
 $('#bell').onclick = () => { tab = users.some(u => st(u) === 'pending') ? 'pending' : 'reports'; render(); };
