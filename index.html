@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Catering Crew Admin</title>
+<style>
+:root{--blue:#1677ff;--navy:#0b2559;--ink:#0b2a5b;--muted:#6b7f9e;--line:#e2ebf7;--soft:#eef5ff}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;font-family:system-ui,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:#f5f8fd}
+button{font:inherit;cursor:pointer}
+a{color:var(--blue);text-decoration:none}
+svg{vertical-align:middle;flex:none}
+input,select{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+/* login */
+#login{max-width:380px;margin:12vh auto;text-align:center;padding:0 16px}
+#login .go{background:var(--blue);color:#fff;border:0;border-radius:10px;padding:12px 22px}
+/* layout */
+#app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+#side{background:var(--navy);color:#c9d6f0;padding:18px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+.brand{display:flex;gap:10px;align-items:center;color:#fff;font-weight:700;line-height:1.2;padding:4px 6px 18px;border-bottom:1px solid #ffffff22;margin-bottom:14px}
+.brand small{display:block;font-weight:400;color:#c9d6f0;font-size:15px}
+#nav{display:flex;flex-direction:column;gap:6px;flex:1}
+.nv{display:flex;align-items:center;gap:12px;background:none;border:0;color:#c9d6f0;padding:12px 14px;border-radius:10px;text-align:left}
+.nv:hover{background:#ffffff14}
+.nv.on{background:var(--blue);color:#fff}
+.nv .bd{margin-left:auto;background:#ff3b5c;color:#fff;border-radius:99px;font-size:12px;padding:1px 8px}
+.foot{font-size:12px;border-top:1px solid #ffffff22;padding:14px 6px 0}
+.foot b{display:block;color:#fff;font-size:13px}
+#main{padding:22px 26px;min-width:0}
+.top{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:20px}
+.top .ttl{flex:1;min-width:220px}
+.top h1{margin:0;font-size:24px}
+.top p{margin:4px 0 0;color:var(--muted)}
+#q{width:280px;max-width:100%}
+.bell{position:relative;background:#fff;border:1px solid var(--line);border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;color:var(--ink)}
+.bell .dot{position:absolute;top:-4px;right:-4px;background:#ff3b5c;color:#fff;border-radius:99px;font-size:11px;padding:1px 6px}
+.me{display:flex;align-items:center;gap:8px;font-size:14px}
+.av{width:38px;height:38px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.btn-o{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 14px;color:var(--ink)}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px}
+.sc{display:flex;gap:12px;align-items:center;border-radius:14px;padding:16px;cursor:pointer;border:1px solid #0000000a}
+.sc small{display:block;font-size:13px}
+.sc b{font-size:30px;line-height:1.2}
+.sc em{display:block;font-style:normal;font-size:12px;color:var(--muted)}
+.sc.blue{background:#e5f0ff;color:#1457b8}.sc.green{background:#e3f6ec;color:#127a43}.sc.yellow{background:#fff3d6;color:#a86a00}.sc.red{background:#fde6e6;color:#c62828}.sc.purple{background:#ece8fb;color:#5b3fc4}
+.sc b,.sc small{color:var(--ink)}
+/* panel */
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px}
+.panel h2{margin:0;font-size:20px}
+.panel .sub{color:var(--muted);margin:4px 0 14px}
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.pl{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 16px;color:var(--ink)}
+.pl.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.bar .sp{flex:1}
+/* member cards */
+.member{display:grid;grid-template-columns:1.3fr 1fr auto;gap:18px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px;background:#fff}
+.member.pending{background:#f2f7ff;border-left:4px solid #f5a524}
+.who{display:flex;gap:14px;align-items:center;min-width:0}
+.pic{width:88px;height:88px;border-radius:50%;object-fit:cover;flex:none;background:#dbe8fb}
+.ph{display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--blue);font-size:32px}
+.inf{min-width:0}.inf .ln{margin-top:5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:#33507c;font-size:14px}
+.nm b{font-size:17px;margin-right:6px}
+.loc{display:inline-flex;gap:4px;align-items:center}
+.meta{border-left:1px solid var(--line);padding-left:18px;display:flex;flex-direction:column;gap:7px;font-size:14px;color:#33507c}
+.meta div{display:flex;gap:8px;align-items:center}.meta .sm{font-size:12px;color:var(--muted)}
+.acts{display:flex;flex-direction:column;gap:8px;min-width:150px}
+.acts button,.rowbtn button{display:flex;gap:6px;align-items:center;justify-content:center;border-radius:8px;padding:9px 14px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+.acts .ok{background:#12a150;border-color:#12a150;color:#fff}
+.acts .out,.menu .red{border-color:#e53935;color:#e53935}
+.rowbtn{display:flex;gap:8px;align-items:center}
+.kebab{position:relative}.kebab .menu{display:none;position:absolute;right:0;top:110%;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 6px 20px #0b2a5b22;z-index:5;min-width:120px;padding:6px}
+.kebab.open .menu{display:block}.menu button{width:100%;border:0;background:none;text-align:left;padding:9px 12px;border-radius:6px}.menu button:hover{background:var(--soft)}
+.pill{font-size:12px;border-radius:99px;padding:2px 10px;font-weight:600}
+.pill.pending{background:#fff0cc;color:#a86a00}.pill.approved{background:#d9f5e6;color:#127a43}.pill.blocked{background:#fde1e1;color:#c62828}
+/* other views */
+.card{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+.card .info{flex:1;line-height:1.6;word-break:break-word}
+.card .btns{display:flex;flex-direction:column;gap:6px}
+.card .btns button{border:1px solid var(--blue);background:#fff;border-radius:8px;padding:8px 14px;color:var(--ink)}
+.card .btns button.danger{border-color:#e53935;color:#e53935}
+.tag{font-size:12px;border:1px solid var(--blue);border-radius:99px;padding:1px 8px}
+.tag.blocked{border-color:#e53935;color:#e53935}
+.muted{color:var(--muted)}
+/* modal */
+#modal{position:fixed;inset:0;background:#0b2a5b66;display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
+#modal .box{background:#fff;border-radius:16px;max-width:560px;width:100%;max-height:90vh;overflow:auto;padding:22px;position:relative}
+#modal .x{position:absolute;right:14px;top:12px;background:none;border:0;font-size:20px}
+#modal dl{display:grid;grid-template-columns:90px 1fr;gap:8px 12px;margin:16px 0}#modal dt{color:var(--muted)}#modal dd{margin:0;word-break:break-word}
+#modal .rep{background:var(--soft);border-radius:10px;padding:10px;margin-bottom:8px;font-size:14px}
+#modal .acts{flex-direction:row;flex-wrap:wrap;margin-top:14px}
+@media(max-width:1000px){.stats{grid-template-columns:repeat(2,1fr)}.member{grid-template-columns:1fr}.meta{border-left:0;padding-left:0}}
+@media(max-width:820px){#app{grid-template-columns:1fr}#side{position:static;height:auto;flex-direction:row;overflow-x:auto;align-items:center;gap:8px}.brand,.foot{display:none}#nav{flex-direction:row;flex:none}.nv{white-space:nowrap}#main{padding:14px}}
+</style>
+</head>
+<body>
+<div id="login"><h1>Catering Crew Admin</h1><button class="go" id="signin">Sign in with Google</button><p id="msg"></p>
+  <details id="setup"><summary>Settings</summary>
+    <p><input id="cfgEmail" placeholder="Admin Gmail (required)" style="width:100%"></p>
+    <p><input id="cfgKey" placeholder="Firebase Web API key" style="width:100%"></p>
+    <p><input id="cfgApp" placeholder="Web appId (optional)" style="width:100%"></p>
+    <button class="btn-o" id="cfgSave">Save</button>
+  </details></div>
+
+<div id="app" hidden>
+  <aside id="side">
+    <div class="brand">
+      <svg viewBox="0 0 64 64" width="44" height="44"><circle cx="22" cy="26" r="11" fill="#fff"/><circle cx="32" cy="22" r="13" fill="#fff"/><circle cx="42" cy="26" r="11" fill="#fff"/><rect x="18" y="32" width="28" height="18" rx="4" fill="#fff"/><path d="M26 38v8M32 38v8M38 38v8" stroke="#0b2559" stroke-width="2.5" stroke-linecap="round"/></svg>
+      <div>Catering Crew<small>Admin</small></div>
+    </div>
+    <nav id="nav"></nav>
+    <div class="foot"><b>Manage Your Crew</b>Better events. Happier teams.</div>
+  </aside>
+  <div id="main">
+    <header class="top">
+      <div class="ttl"><h1>Welcome, Admin</h1><p>Here's what's happening with your catering crew.</p></div>
+      <input id="q" placeholder="Search by name or phone…">
+      <button class="bell" id="bell" title="Pending approvals and reports"></button>
+      <div class="me"><span class="av" id="av">A</span><span id="who"></span><button class="btn-o" id="out">Logout</button></div>
+    </header>
+    <section id="stats"></section>
+    <section id="list"></section>
+  </div>
+</div>
+<div id="modal" hidden></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, getDocs, query, where, increment, arrayRemove } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+// Settings are asked once on this page and kept in this browser (no need to edit this file).
+const DEFAULTS = { apiKey: "AIzaSyAJkxCmTJRm__Ba_BJDQyBKF3wavZwhQIc", authDomain: "cateringapp-10b93.firebaseapp.com", projectId: "cateringapp-10b93", appId: "", email: "" };
+const cfg = { ...DEFAULTS, ...JSON.parse(localStorage.getItem('cc_admin_cfg') || '{}') };
+const firebaseConfig = { apiKey: cfg.apiKey, authDomain: cfg.authDomain, projectId: cfg.projectId, ...(cfg.appId ? { appId: cfg.appId } : {}) };
+const ADMIN_EMAIL = (cfg.email || '').trim().toLowerCase();
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ic = {
+  grid: "M3,13h8V3H3v10zM3,21h8v-6H3v6zM13,21h8V11h-8v10zM13,3v6h8V3h-8z",
+  clock: "M11.99,2C6.47,2 2,6.48 2,12s4.47,10 9.99,10C17.52,22 22,17.52 22,12S17.52,2 11.99,2zM12,20c-4.42,0 -8,-3.58 -8,-8s3.58,-8 8,-8 8,3.58 8,8 -3.58,8 -8,8zM12.5,7H11v6l5.25,3.15 0.75,-1.23 -4.5,-2.67z",
+  check: "M9,16.17L4.83,12l-1.42,1.41L9,19 21,7l-1.41,-1.41z",
+  block: "M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM4,12c0,-4.42 3.58,-8 8,-8 1.85,0 3.55,0.63 4.9,1.69L5.69,16.9C4.63,15.55 4,13.85 4,12zM12,20c-1.85,0 -3.55,-0.63 -4.9,-1.69L18.31,7.1C19.37,8.45 20,10.15 20,12c0,4.42 -3.58,8 -8,8z",
+  flag: "M14.4,6L14,4H5v17h2v-7h5.6l0.4,2h7V6z",
+  doc: "M14,2H6c-1.1,0 -1.99,0.9 -1.99,2L4,20c0,1.1 0.89,2 1.99,2H18c1.1,0 2,-0.9 2,-2V8l-6,-6zM16,18H8v-2h8v2zM16,14H8v-2h8v2zM13,9V3.5L18.5,9H13z",
+  money: "M11.8,10.9c-2.27,-0.59 -3,-1.2 -3,-2.15 0,-1.09 1.01,-1.85 2.7,-1.85 1.78,0 2.44,0.85 2.5,2.1h2.21c-0.07,-1.72 -1.12,-3.3 -3.21,-3.81V3h-3v2.16c-1.94,0.42 -3.5,1.68 -3.5,3.61 0,2.31 1.91,3.46 4.7,4.13 2.5,0.6 3,1.48 3,2.41 0,0.69 -0.49,1.79 -2.7,1.79 -2.06,0 -2.87,-0.92 -2.98,-2.1h-2.2c0.12,2.19 1.76,3.42 3.68,3.83V21h3v-2.15c1.95,-0.37 3.5,-1.5 3.5,-3.55 0,-2.84 -2.43,-3.81 -4.7,-4.4z",
+  person: "M12,12c2.21,0 4,-1.79 4,-4s-1.79,-4 -4,-4 -4,1.79 -4,4 1.79,4 4,4zM12,14c-2.67,0 -8,1.34 -8,4v2h16v-2c0,-2.66 -5.33,-4 -8,-4z",
+  group: "M16,11c1.66,0 2.99,-1.34 2.99,-3S17.66,5 16,5c-1.66,0 -3,1.34 -3,3s1.34,3 3,3zM8,11c1.66,0 2.99,-1.34 2.99,-3S9.66,5 8,5C6.34,5 5,6.34 5,8s1.34,3 3,3zM8,13c-2.33,0 -7,1.17 -7,3.5V19h14v-2.5c0,-2.33 -4.67,-3.5 -7,-3.5zM16,13c-0.29,0 -0.62,0.02 -0.97,0.05 1.16,0.84 1.97,1.97 1.97,3.45V19h6v-2.5c0,-2.33 -4.67,-3.5 -7,-3.5z",
+  phone: "M6.62,10.79c1.44,2.83 3.76,5.14 6.59,6.59l2.2,-2.2c0.27,-0.27 0.67,-0.36 1.02,-0.24 1.12,0.37 2.33,0.57 3.57,0.57 0.55,0 1,0.45 1,1V20c0,0.55 -0.45,1 -1,1 -9.39,0 -17,-7.61 -17,-17 0,-0.55 0.45,-1 1,-1h3.5c0.55,0 1,0.45 1,1 0,1.25 0.2,2.45 0.57,3.57 0.11,0.35 0.03,0.74 -0.25,1.02l-2.2,2.2z",
+  pin: "M12,2C8.13,2 5,5.13 5,9c0,5.25 7,13 7,13s7,-7.75 7,-13c0,-3.87 -3.13,-7 -7,-7zM12,11.5c-1.38,0 -2.5,-1.12 -2.5,-2.5s1.12,-2.5 2.5,-2.5 2.5,1.12 2.5,2.5 -1.12,2.5 -2.5,2.5z",
+  cal: "M19,3h-1V1h-2v2H8V1H6v2H5C3.89,3 3.01,3.9 3.01,5L3,19c0,1.1 0.89,2 2,2h14c1.1,0 2,-0.9 2,-2V5c0,-1.1 -0.9,-2 -2,-2zM19,19H5V8h14v11z",
+  star: "M22,9.24l-7.19,-0.62L12,2 9.19,8.63 2,9.24l5.46,4.73L5.82,21 12,17.27 18.18,21l-1.63,-7.03L22,9.24zM12,15.4l-3.76,2.27 1,-4.28 -3.32,-2.88 4.38,-0.38L12,6.1l1.71,4.04 4.38,0.38 -3.32,2.88 1,4.28L12,15.4z",
+  eye: "M12,4.5C7,4.5 2.73,7.61 1,12c1.73,4.39 6,7.5 11,7.5s9.27,-3.11 11,-7.5c-1.73,-4.39 -6,-7.5 -11,-7.5zM12,17c-2.76,0 -5,-2.24 -5,-5s2.24,-5 5,-5 5,2.24 5,5 -2.24,5 -5,5zM12,9c-1.66,0 -3,1.34 -3,3s1.34,3 3,3 3,-1.34 3,-3 -1.34,-3 -3,-3z",
+  trash: "M6,19c0,1.1 0.9,2 2,2h8c1.1,0 2,-0.9 2,-2V7H6v12zM19,4h-3.5l-1,-1h-5l-1,1H5v2h14V4z",
+  bell: "M12,22c1.1,0 2,-0.9 2,-2h-4c0,1.1 0.89,2 2,2zM18,16v-5c0,-3.07 -1.64,-5.64 -4.5,-6.32V4c0,-0.83 -0.67,-1.5 -1.5,-1.5s-1.5,0.67 -1.5,1.5v0.68C7.63,5.36 6,7.92 6,11v5l-2,2v1h16v-1l-2,-2z"
+};
+const svg = (k, s = 18) => `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="currentColor"><path d="${ic[k]}"/></svg>`;
+const img = (b, name) => b && /^[A-Za-z0-9+\/=]+$/.test(b) ? `<img class="pic" src="data:image/jpeg;base64,${b}" alt="">` : `<div class="pic ph">${esc(String(name || '?').charAt(0).toUpperCase())}</div>`;
+const link = l => /^https?:\/\//i.test(l || '') ? `<a class="loc" href="${esc(l)}" target="_blank" rel="noopener">${svg('pin', 16)} View Location</a>` : '';
+const fmt = ms => ms ? new Date(ms).toLocaleString('en-IN', {day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'}) : '-';
+const st = u => u.status || 'pending';
+const money = n => '₹' + Math.round(n).toLocaleString('en-IN');
+
+const app = initializeApp(firebaseConfig), auth = getAuth(app), db = getFirestore(app);
+let users = [], reports = [], events = [], stats = {}, tab = 'dashboard', term = '', sort = 'latest', period = 'all', unsubs = [];
+
+$('#cfgEmail').value = cfg.email || ''; $('#cfgKey').value = cfg.apiKey || ''; $('#cfgApp').value = cfg.appId || '';
+$('#setup').open = !ADMIN_EMAIL;
+$('#cfgSave').onclick = () => {
+  localStorage.setItem('cc_admin_cfg', JSON.stringify({ email: $('#cfgEmail').value.trim(), apiKey: $('#cfgKey').value.trim(), appId: $('#cfgApp').value.trim() }));
+  location.reload();
+};
+$('#signin').onclick = () => !ADMIN_EMAIL ? $('#msg').textContent = 'Enter your admin Gmail in Settings below and press Save first.' : signInWithPopup(auth, new GoogleAuthProvider()).catch(e => $('#msg').textContent = e.message);
+$('#out').onclick = () => signOut(auth);
+$('#q').oninput = e => { term = e.target.value.toLowerCase(); render(); };
+$('#bell').onclick = () => { tab = users.some(u => st(u) === 'pending') ? 'pending' : 'reports'; render(); };
+
+const openCount = id => reports.filter(r => r.targetId === id && r.status !== 'resolved').length;
+const statLine = u => { const s = stats[u.uid] || {}; return u.role === 'worker'
+  ? `Done ${s.completed || 0} · No-show ${s.noShows || 0} · Late cancels ${s.lateCancels || 0}`
+  : `Owner paid ${s.ownerPaid || 0} · Not paid ${s.ownerNotPaid || 0}`; };
+const pill = s => `<span class="pill ${esc(s)}">${esc(s.charAt(0).toUpperCase() + s.slice(1))}</span>`;
+
+const memberCard = u => {
+  const s = st(u), id = esc(u.uid);
+  const acts = s === 'pending'
+    ? `<button class="ok" data-a="approve" data-id="${id}">${svg('check')} Approve</button><button class="out" data-a="block" data-id="${id}">${svg('block')} Block</button><button class="out" data-a="delete" data-id="${id}">${svg('trash')} Delete</button>`
+    : s === 'blocked'
+    ? `<button class="ok" data-a="unblock" data-id="${id}">Unblock</button><button data-a="view" data-id="${id}">${svg('eye')} View Details</button><button class="out" data-a="delete" data-id="${id}">${svg('trash')} Delete</button>`
+    : `<div class="rowbtn"><button data-a="view" data-id="${id}">${svg('eye')} View Details</button><div class="kebab"><button data-a="kebab">⋮</button><div class="menu"><button data-a="block" data-id="${id}">Block</button><button class="red" data-a="delete" data-id="${id}">Delete</button></div></div></div>`;
+  return `<div class="member ${s}">
+    <div class="who">${img(u.photo, u.name)}<div class="inf">
+      <div class="nm"><b>${esc(u.name)}</b>${pill(s)}</div>
+      <div class="ln">${svg('person', 16)} ${u.role === 'owner' ? 'Owner' : 'Worker'}</div>
+      <div class="ln">${svg('phone', 16)} <a href="tel:${esc(u.phone)}">${esc(u.phone)}</a> ${link(u.locationLink)}</div></div></div>
+    <div class="meta"><div>${svg('cal', 16)} Joined: ${fmt(u.createdAt)}</div><div>${svg('doc', 16)} Open Reports: ${openCount(u.uid)}</div>
+      ${u.role === 'worker' ? `<div>${svg('star', 16)} Rate: ₹${esc(u.rate)}</div>` : ''}<div class="sm">${statLine(u)}</div></div>
+    <div class="acts">${acts}</div></div>`;
+};
+
+const reportCard = r => {
+  const t = users.find(u => u.uid === r.targetId);
+  return `<div class="card"><div class="info"><b>${esc(r.reason)}</b> <span class="tag">against ${esc(r.targetRole)}</span><br>
+  Against: <b>${esc(r.targetName)}</b> ${t ? esc(t.phone) : ''} (${openCount(r.targetId)} open reports)<br>
+  By: ${esc(r.reporterName)} · ${esc(r.reporterPhone)}<br>
+  Event: ${esc(r.eventTitle)} · ${fmt(r.eventStart)}<br>${esc(r.note || '')}<br><small class="muted">${fmt(r.createdAt)}</small></div>
+  <div class="btns"><button data-a="resolve" data-id="${esc(r.id)}">Resolve</button>
+  <button class="danger" data-a="block" data-id="${esc(r.targetId)}">Block user</button></div></div>`;
+};
+
+// Upcoming work posts (no approval needed; delete here if a post looks fake).
+function postsView() {
+  const now = Date.now();
+  return events.filter(e => e.endMillis > now).sort((a, b) => a.startMillis - b.startMillis).map(e => `<div class="card"><div class="info">
+    <b>${esc(e.workType)}</b> · ${fmt(e.startMillis)} – ${fmt(e.endMillis)}<br>
+    By ${esc(e.ownerName)} · <a href="tel:${esc(e.ownerPhone)}">${esc(e.ownerPhone)}</a> ${link(e.locationLink)}<br>
+    ₹${esc(e.perHead)}/head · ${esc(e.slotsFilled)}/${esc(e.slotsTotal)} booked<br>${esc(e.text || '')}</div>
+    <div class="btns"><button class="danger" data-a="delpost" data-id="${esc(e.id)}">Delete post</button></div></div>`).join('') || '<p class="muted">No upcoming posts.</p>';
+}
+
+// Workers ranked by completed earnings (price per head x events they were booked on).
+function earningsView() {
+  const now = Date.now(), d = new Date();
+  const from = period === 'month' ? new Date(d.getFullYear(), d.getMonth(), 1).getTime() : period === '30' ? now - 30 * 864e5 : 0;
+  const rows = {};
+  const row = id => rows[id] ||= {done: 0, doneN: 0, up: 0, upN: 0, fr: 0};
+  for (const e of events) {
+    if ((e.startMillis || 0) < from) continue;
+    const past = e.endMillis <= now;
+    for (const id of e.bookedIds || []) { const r = row(id); if (past) { r.done += e.perHead || 0; r.doneN++; } else { r.up += e.perHead || 0; r.upN++; } }
+    for (const [id, n] of Object.entries(e.friendCounts || {})) if (n > 0) row(id).fr += n * (e.perHead || 0);
+  }
+  const all = users.filter(u => u.role === 'worker').map(u => ({u, ...(rows[u.uid] || {done: 0, doneN: 0, up: 0, upN: 0, fr: 0})}));
+  const list = all.filter(x => x.done || x.up || x.fr).sort((a, b) => b.done - a.done || b.up - a.up);
+  const total = list.reduce((s, x) => s + x.done, 0);
+  const opt = (v, l) => `<option value="${v}" ${period === v ? 'selected' : ''}>${l}</option>`;
+  return `<p>Period: <select id="period">${opt('all', 'All time')}${opt('month', 'This month')}${opt('30', 'Last 30 days')}</select>
+    &nbsp; Total completed: <b>${money(total)}</b> &nbsp; <small class="muted">(${all.length - list.length} workers with no bookings hidden)</small></p>
+    <p><small class="muted">Estimate = price per head x events a worker was booked on. Payments happen outside the app, so no-shows and unpaid jobs are not subtracted.</small></p>`
+    + (list.map((x, i) => `<div class="card"><b style="width:28px">${i + 1}</b>${img(x.u.photo, x.u.name)}<div class="info">
+      <b>${esc(x.u.name)}</b> ${pill(st(x.u))}<br>
+      <a href="tel:${esc(x.u.phone)}">${esc(x.u.phone)}</a> · asks ₹${esc(x.u.rate)}/event<br>
+      Completed: <b>${money(x.done)}</b> (${x.doneN} events)<br>
+      Upcoming: ${money(x.up)} (${x.upN} events)${x.fr ? `<br>Via friends: ${money(x.fr)}` : ''}</div></div>`).join('') || '<p class="muted">No bookings yet.</p>');
+}
+
+function membersView(c) {
+  const cur = tab === 'dashboard' ? 'all' : tab;
+  const pl = (k, l, n) => `<button class="pl ${cur === k ? 'on' : ''}" data-tab="${k === 'all' ? 'dashboard' : k}">${l} (${n})</button>`;
+  const sorters = { latest: (a, b) => (b.createdAt || 0) - (a.createdAt || 0), oldest: (a, b) => (a.createdAt || 0) - (b.createdAt || 0),
+    name: (a, b) => String(a.name).localeCompare(String(b.name)), rate: (a, b) => (Number(b.rate) || 0) - (Number(a.rate) || 0) };
+  const so = (v, l) => `<option value="${v}" ${sort === v ? 'selected' : ''}>${l}</option>`;
+  const list = users.filter(u => (cur === 'all' || st(u) === cur) && (!term || (String(u.name) + String(u.phone)).toLowerCase().includes(term))).sort(sorters[sort]);
+  return `<div class="panel"><h2>Catering Crew Members</h2><div class="sub">Manage, approve or block crew members easily.</div>
+    <div class="bar">${pl('all', 'All', users.length)}${pl('pending', 'Pending', c.pending)}${pl('approved', 'Approved', c.approved)}${pl('blocked', 'Blocked', c.blocked)}
+    <span class="sp"></span><label class="muted">Sort by: <select id="sort">${so('latest', 'Latest Joined')}${so('oldest', 'Oldest')}${so('name', 'Name (A-Z)')}${so('rate', 'Highest rate')}</select></label></div>
+    ${list.map(memberCard).join('') || '<p class="muted">Nothing here.</p>'}</div>`;
+}
+
+function render() {
+  const c = {pending: 0, approved: 0, blocked: 0};
+  users.forEach(u => c[st(u)] = (c[st(u)] || 0) + 1);
+  const open = reports.filter(r => r.status !== 'resolved');
+  const workers = users.filter(u => u.role === 'worker').length, owners = users.filter(u => u.role === 'owner').length;
+  const nav = [['dashboard', 'Dashboard', 'grid', 0], ['pending', 'Pending', 'clock', c.pending], ['approved', 'Approved', 'check', 0], ['blocked', 'Blocked', 'block', 0],
+    ['reports', 'Reports', 'flag', open.length], ['posts', 'Posts', 'doc', 0], ['earnings', 'Earnings', 'money', 0]];
+  $('#nav').innerHTML = nav.map(([k, l, i, n]) => `<button class="nv ${tab === k ? 'on' : ''}" data-tab="${k}">${svg(i, 20)}<span>${l}</span>${n ? `<span class="bd">${n}</span>` : ''}</button>`).join('');
+  const alerts = c.pending + open.length;
+  $('#bell').innerHTML = svg('bell', 22) + (alerts ? `<span class="dot">${alerts}</span>` : '');
+  const card = (cls, k, ic2, label, n, sub) => `<div class="sc ${cls}" data-tab="${k}">${svg(ic2, 30)}<div><small>${label}</small><b>${n}</b>${sub ? `<em>${sub}</em>` : ''}</div></div>`;
+  $('#stats').innerHTML = tab === 'dashboard' ? `<div class="stats">${card('blue', 'dashboard', 'group', 'Total Workers', workers, owners + ' owners')}${card('green', 'approved', 'check', 'Approved', c.approved)}${card('yellow', 'pending', 'clock', 'Pending', c.pending)}${card('red', 'blocked', 'block', 'Blocked', c.blocked)}${card('purple', 'posts', 'doc', 'Total Posts', events.length)}</div>` : '';
+  $('#list').innerHTML = tab === 'earnings' ? earningsView()
+    : tab === 'posts' ? postsView()
+    : tab === 'reports' ? open.sort((a, b) => b.createdAt - a.createdAt).map(reportCard).join('') || '<p class="muted">No open reports.</p>'
+    : membersView(c);
+}
+
+function closeModal() { $('#modal').hidden = true; $('#modal').innerHTML = ''; }
+function showUser(id) {
+  const u = users.find(x => x.uid === id); if (!u) return;
+  const rs = reports.filter(r => r.targetId === id).sort((a, b) => b.createdAt - a.createdAt);
+  const posts = u.role === 'owner' ? events.filter(e => e.ownerId === id).length : null;
+  const s = st(u), i = esc(id);
+  $('#modal').innerHTML = `<div class="box"><button class="x" data-a="close">✕</button>
+    <div class="who">${img(u.photo, u.name)}<div><h2 style="margin:0">${esc(u.name)}</h2>${pill(s)} <span class="muted">${u.role === 'owner' ? 'Owner' : 'Worker'}</span></div></div>
+    <dl><dt>Phone</dt><dd><a href="tel:${esc(u.phone)}">${esc(u.phone)}</a></dd>
+    <dt>Location</dt><dd>${link(u.locationLink) || '-'}</dd>
+    ${u.role === 'worker' ? `<dt>Rate</dt><dd>₹${esc(u.rate)} per event</dd><dt>About</dt><dd>${esc(u.bio || '-')}</dd>` : ''}
+    <dt>Joined</dt><dd>${fmt(u.createdAt)}</dd><dt>Record</dt><dd>${statLine(u)}</dd>${posts !== null ? `<dt>Posts</dt><dd>${posts}</dd>` : ''}</dl>
+    <h3>Reports against (${rs.length})</h3>
+    ${rs.map(r => `<div class="rep"><b>${esc(r.reason)}</b> · ${esc(r.status || 'open')} · ${fmt(r.createdAt)}<br>By ${esc(r.reporterName)} (${esc(r.reporterPhone)}) · ${esc(r.eventTitle)}<br>${esc(r.note || '')}</div>`).join('') || '<p class="muted">None</p>'}
+    <div class="acts">${s === 'pending' ? `<button class="ok" data-a="approve" data-id="${i}">Approve</button>` : ''}
+    ${s === 'blocked' ? `<button class="ok" data-a="unblock" data-id="${i}">Unblock</button>` : `<button class="out" data-a="block" data-id="${i}">Block</button>`}
+    <button class="out" data-a="delete" data-id="${i}">Delete</button></div></div>`;
+  $('#modal').hidden = false;
+}
+
+// Removes the user's upcoming posts/bookings so blocked people don't hold slots.
+async function cleanup(u) {
+  const now = Date.now(), id = u.uid;
+  if (u.role === 'owner') {
+    const q = await getDocs(query(collection(db, 'events'), where('ownerId', '==', id)));
+    for (const d of q.docs) if (d.data().endMillis > now) {
+      const b = await getDocs(collection(d.ref, 'bookings'));
+      for (const x of b.docs) await deleteDoc(x.ref);
+      await deleteDoc(d.ref);
+    }
+  } else {
+    const q = await getDocs(query(collection(db, 'events'), where('bookedIds', 'array-contains', id)));
+    for (const d of q.docs) if (d.data().endMillis > now) {
+      await updateDoc(d.ref, {slotsFilled: increment(-1), bookedIds: arrayRemove(id)});
+      await deleteDoc(doc(d.ref, 'bookings', id));
+    }
+    const f = await getDocs(query(collection(db, 'events'), where('friendCounts.' + id, '>', 0)));
+    for (const d of f.docs) if (d.data().endMillis > now) {
+      const b = await getDocs(query(collection(d.ref, 'bookings'), where('uid', '==', id), where('role', '==', 'friend')));
+      for (const x of b.docs) await deleteDoc(x.ref);
+      await updateDoc(d.ref, {slotsFilled: increment(-b.size), ['friendCounts.' + id]: 0});
+    }
+  }
+}
+
+document.addEventListener('change', e => {
+  if (e.target.id === 'period') { period = e.target.value; render(); }
+  if (e.target.id === 'sort') { sort = e.target.value; render(); }
+});
+
+document.addEventListener('click', async e => {
+  const k = e.target.closest('.kebab');
+  document.querySelectorAll('.kebab.open').forEach(x => { if (x !== k) x.classList.remove('open'); });
+  if (e.target.id === 'modal') { closeModal(); return; }
+  const t = e.target.closest('[data-tab],[data-a]'); if (!t) return;
+  if (t.dataset.tab) { tab = t.dataset.tab; render(); return; }
+  const a = t.dataset.a, id = t.dataset.id, u = users.find(x => x.uid === id);
+  if (a === 'kebab') { t.parentElement.classList.toggle('open'); return; }
+  if (a === 'close') { closeModal(); return; }
+  if (a === 'view') { showUser(id); return; }
+  try {
+    if (a === 'approve' || a === 'unblock') await updateDoc(doc(db, 'users', id), {status: 'approved'});
+    if (a === 'resolve') await updateDoc(doc(db, 'reports', id), {status: 'resolved'});
+    if (a === 'block' && u && confirm(`Block ${u.name}? Their upcoming bookings/posts will be removed and they cannot use the app.`)) {
+      await cleanup(u); await updateDoc(doc(db, 'users', id), {status: 'blocked'});
+    }
+    if (a === 'delete' && u && confirm(`DELETE ${u.name}'s profile? They could register again with the same Google account. Use Block to stop that.`)) {
+      await cleanup(u); await deleteDoc(doc(db, 'users', id)); await deleteDoc(doc(db, 'tokens', id));
+    }
+    if (a === 'delpost' && confirm('Delete this post and its bookings?')) {
+      const b = await getDocs(collection(db, 'events', id, 'bookings'));
+      for (const x of b.docs) await deleteDoc(x.ref);
+      await deleteDoc(doc(db, 'events', id));
+    }
+    closeModal();
+  } catch (err) { alert(err.message); }
+});
+
+// start listening only after everything above is defined
+onAuthStateChanged(auth, u => {
+  unsubs.forEach(f => f()); unsubs = [];
+  if (u && ADMIN_EMAIL && (u.email || '').toLowerCase() === ADMIN_EMAIL) {
+    $('#login').hidden = true; $('#app').hidden = false; $('#who').textContent = u.email; $('#av').textContent = (u.email || 'A').charAt(0).toUpperCase();
+    const watch = (name, fn) => unsubs.push(onSnapshot(collection(db, name), s => { fn(s); render(); }, e => alert(e.message)));
+    watch('users', s => users = s.docs.map(d => ({...d.data(), uid: d.id})));
+    watch('reports', s => reports = s.docs.map(d => ({...d.data(), id: d.id})));
+    watch('events', s => events = s.docs.map(d => ({...d.data(), id: d.id})));
+    watch('stats', s => stats = Object.fromEntries(s.docs.map(d => [d.id, d.data()])));
+  } else {
+    $('#app').hidden = true; $('#login').hidden = false;
+    if (u) { $('#msg').textContent = 'This Google account is not the admin.'; signOut(auth); }
+  }
+});
+</script>
+</body>
+</html>
